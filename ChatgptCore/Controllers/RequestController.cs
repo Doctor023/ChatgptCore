@@ -7,9 +7,11 @@ namespace ChatgptCore.Controllers
     public class RequestController : Controller
     {
         [HttpPost]
-        public IActionResult Send()
+        public async Task<IActionResult> SendAsync()
         {
-            return Json("Отправлено");
+            ChatGPT chatGPT = new ChatGPT();
+            string? response = await chatGPT.SendRequest();
+            return Json(response);
         }
     }
 }
