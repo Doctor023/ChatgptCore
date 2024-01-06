@@ -5,26 +5,35 @@ class ChatGPT
 {
     public async Task<string?> SendRequest()
     {
-        // токен из личного кабинета
-        string apiKey = "sk-95Ez2Z1rtgegrRTFFDSTVTdsdfsgdv3422kjhLghnh53QiT8F";
+        string messageFromVK = "Привет";
+        string _promtDenisGPT = "Ты голосовой помощник";
+        string apiKey = "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";
+        string replyText = "Как ты?";
         // адрес api для взаимодействия с чат-ботом
         string endpoint = "https://api.openai.com/v1/chat/completions";
         // набор соообщений диалога с чат-ботом
         List<Message> messages = new List<Message>();
         // HttpClient для отправки сообщений
         var httpClient = new HttpClient();
+        httpClient.Timeout = TimeSpan.FromMinutes(5);
         // устанавливаем отправляемый в запросе токен
         httpClient.DefaultRequestHeaders.Add("Authorization", $"Bearer {apiKey}");
 
+        while (true)
+        {
+            var systemMessage = new Message() { Role = "system", Content = _promtDenisGPT };
+            messages.Add(systemMessage);
             // ввод сообщения пользователя
-            Console.Write("Привет");
-            var content = "Привет";
+            Console.Write($"{messageFromVK}");
+
 
             // если введенное сообщение имеет длину меньше 1 символа
             // то выходим из цикла и завершаем программу
-            if (content is not { Length: > 0 }) return null;
+            if (messageFromVK is not { Length: > 0 }) return null;
             // формируем отправляемое сообщение
-            var message = new Message() { Role = "user", Content = content };
+            Message message = new Message() { Role = "user", Content = messageFromVK };
+            if (replyText == null) { message = new Message() { Role = "user", Content = messageFromVK }; }
+            else { message = new Message() { Role = "user", Content = $"{replyText}\n{messageFromVK}" }; }
             // добавляем сообщение в список сообщений
             messages.Add(message);
 
@@ -45,18 +54,21 @@ class ChatGPT
             }
             // получаем данные ответа
             ResponseData? responseData = await response.Content.ReadFromJsonAsync<ResponseData>();
+            var responseDataID = responseData?.Id;
+            Console.WriteLine($"ID сессии: {responseDataID}");
 
             var choices = responseData?.Choices ?? new List<Choice>();
             if (choices.Count == 0)
             {
                 Console.WriteLine("No choices were returned by the API");
-                return null;
+                continue;
             }
             var choice = choices[0];
             var responseMessage = choice.Message;
             // добавляем полученное сообщение в список сообщений
             messages.Add(responseMessage);
-            string responseText = responseMessage.Content.Trim();
+            var responseText = responseMessage.Content.Trim();
             return responseText;
         }
+    }
     }
