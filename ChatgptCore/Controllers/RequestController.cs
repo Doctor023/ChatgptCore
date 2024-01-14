@@ -7,7 +7,7 @@ namespace ChatgptCore.Controllers
     public class RequestController : Controller
     {
         [HttpPost]
-        public async Task<IActionResult> SendAsync()
+        public async Task<IActionResult> SendAsync([FromBody] RequestGptModel requestGpt)
         {
             ChatGPT chatGPT = new ChatGPT();
             string? response = await chatGPT.SendRequest();
