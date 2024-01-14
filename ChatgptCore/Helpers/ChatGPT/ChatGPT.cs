@@ -1,14 +1,15 @@
+using ChatgptCore.Helpers;
+using Microsoft.AspNetCore.Identity;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
 class ChatGPT
 {
-    public async Task<string?> SendRequest()
+    public async Task<string?> SendRequest(string messageFromRequest)
     {
-        string messageFromVK = "Привет";
         string _promtDenisGPT = "Ты голосовой помощник";
-        string apiKey = "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";
-        string replyText = "Как ты?";
+        string? apiKey = SecretValues.GetValue("chatgptToken");
+        string replyText = "";
 
         string endpoint = "https://api.openai.com/v1/chat/completions";
 
@@ -23,16 +24,16 @@ class ChatGPT
         {
             var systemMessage = new Message() { Role = "system", Content = _promtDenisGPT };
 
-            Console.Write($"{messageFromVK}");
+            Console.Write($"{messageFromRequest}");
 
 
 
 
-            if (messageFromVK is not { Length: > 0 }) return null;
+            if (messageFromRequest is not { Length: > 0 }) return null;
 
-            Message message = new Message() { Role = "user", Content = messageFromVK };
-            if (replyText == null) { message = new Message() { Role = "user", Content = messageFromVK }; }
-            else { message = new Message() { Role = "user", Content = $"{replyText}\n{messageFromVK}" }; }
+            Message message = new Message() { Role = "user", Content = messageFromRequest };
+            if (replyText == null) { message = new Message() { Role = "user", Content = messageFromRequest }; }
+            else { message = new Message() { Role = "user", Content = $"{replyText}\n{messageFromRequest}" }; }
 
             messages.Add(message);
 
