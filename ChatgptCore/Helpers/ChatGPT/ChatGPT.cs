@@ -8,7 +8,7 @@ class ChatGPT
     public async Task<string?> SendRequest(string messageFromRequest)
     {
         string _promtDenisGPT = "Ты голосовой помощник";
-        string? apiKey = SecretValues.GetValue("chatgptToken");
+        string? apiKey = SecretValues.GetValue("ChatGPT");
         string replyText = "";
 
         string endpoint = "https://api.openai.com/v1/chat/completions";
@@ -24,7 +24,7 @@ class ChatGPT
         {
             var systemMessage = new Message() { Role = "system", Content = _promtDenisGPT };
 
-            Console.Write($"{messageFromRequest}");
+            Console.WriteLine($"{messageFromRequest}");
 
 
 
@@ -49,13 +49,12 @@ class ChatGPT
 
             if (!response.IsSuccessStatusCode)
             {
-                Console.WriteLine($"{(int)response.StatusCode} {response.StatusCode}");
+                Console.WriteLine($"Status code from ChatGPT {(int)response.StatusCode} {response.StatusCode}");
                 return null;
             }
 
             ResponseData? responseData = await response.Content.ReadFromJsonAsync<ResponseData>();
             var responseDataID = responseData?.Id;
-            Console.WriteLine($"ID сессии: {responseDataID}");
 
             var choices = responseData?.Choices ?? new List<Choice>();
             if (choices.Count == 0)
@@ -68,6 +67,7 @@ class ChatGPT
 
             messages.Add(responseMessage);
             var responseText = responseMessage.Content.Trim();
+            Console.WriteLine("Response: " + responseText);
             return responseText;
         }
     }
