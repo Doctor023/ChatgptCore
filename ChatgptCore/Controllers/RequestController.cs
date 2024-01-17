@@ -18,15 +18,15 @@ namespace ChatgptCore.Controllers
                 return new BadRequestResult();
             }
             ChatGPT chatGPT = new ChatGPT();
-            string? response = await chatGPT.SendRequest(requestGptModel.Message);
+            ResponseGptModel responseGptModel = await chatGPT.SendRequest(requestGptModel.Message);
 
-            if (response == null)
+            if (responseGptModel.Output == null)
             {
                 ErrorBadRequestModel badRequest = new ErrorBadRequestModel("ChatGPT returned null");
                 return new BadRequestObjectResult(badRequest);
             }
 
-            return new OkResult();
+            return new OkObjectResult(responseGptModel);
         }
     }
 }

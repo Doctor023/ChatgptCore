@@ -1,11 +1,12 @@
 using ChatgptCore.Helpers;
+using ChatgptCore.Models;
 using Microsoft.AspNetCore.Identity;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 
 class ChatGPT
 {
-    public async Task<string?> SendRequest(string messageFromRequest)
+    public async Task<ResponseGptModel> SendRequest(string messageFromRequest)
     {
         string _promtDenisGPT = "Ты голосовой помощник";
         string? apiKey = SecretValues.GetValue("ChatGPT");
@@ -68,7 +69,10 @@ class ChatGPT
             messages.Add(responseMessage);
             var responseText = responseMessage.Content.Trim();
             Console.WriteLine("Response: " + responseText);
-            return responseText;
+
+            ResponseGptModel responseGptModel = new ResponseGptModel();
+            responseGptModel.Output = responseText;
+            return responseGptModel;
         }
     }
     }
